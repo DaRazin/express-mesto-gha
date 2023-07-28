@@ -1,15 +1,17 @@
 const User = require('../models/user');
+const { ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT } = require('../utils/error_codes');
+
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => {
       if (!users){
-        return res.status(404).send({ message: 'Пользователи не найдены' })
+        return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователи не найдены' });
       };
       res.send({ data: users })
     })
     .catch(() => {
-      res.status(500).send({ massage: 'Ошибка по-умолчанию' });
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
     })
 };
 
@@ -18,12 +20,15 @@ module.exports.getUser = (req, res) => {
   User.findById(userId)
     .then((users) => {
       if (!users){
-        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' })
+        return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователь по указанному _id не найден' });
       };
       res.send({ data: users })
     })
     .catch(() => {
-      res.status(500).send({ massage: 'Ошибка по-умолчанию' });
+      if (err.name === "CastError") {
+        return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: "Указан неверный id. ",})
+      };
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
     })
 };
 
@@ -32,10 +37,10 @@ module.exports.createUser = (req, res) => {
   User.create({name, about, avatar})
     .then(user => res.send({ data: user }))
     .catch((err) => {
-      if (err.name = 'SomeErrorName'){
-        return res.status(400).send({ massage: 'Переданы некорректные данные при создании пользователя' })
+      if (err.name === 'ValidationError'){
+        return res.status(ERROR_CODE_INCORRECT_DATA).send( {massage: 'Переданы некорректные данные при создании пользователя'} );
       };
-      res.status(500).send({ massage: 'Ошибка по-умолчанию' });
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
     })
 };
 
@@ -45,12 +50,15 @@ module.exports.updateUserData = (req, res) => {
   User.findByIdAndUpdate(userId, {name, about})
   .then((users) => {
     if (!users){
-      return res.status(404).send({ message: 'Пользователь по указанному _id не найден' })
+      return res.status(ERROR_CODE_NOTFOUND).send({ message: 'Пользователь по указанному _id не найден' })
     };
     res.send({ data: users })
   })
     .catch(() => {
-      res.status(500).send({ massage: 'Произошла ошибка' });
+      if (err.name === 'ValidationError'){
+        return res.status(ERROR_CODE_INCORRECT_DATA).send( {massage: 'Переданы некорректные данные при создании пользователя'} );
+      };
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Произошла ошибка' });
     })
 };
 
@@ -60,11 +68,14 @@ module.exports.updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(userId, { avatar })
     .then((users) => {
       if (!users){
-        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' })
+        return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: 'Пользователь по указанному _id не найден' })
       };
       res.send({ data: users })
     })
     .catch(() => {
-      res.status(500).send({ massage: 'Произошла ошибка' });
+      if (err.name === 'ValidationError'){
+        return res.status(ERROR_CODE_INCORRECT_DATA).send( {massage: 'Переданы некорректные данные при создании пользователя'} );
+      };
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Произошла ошибка' });
     })
 }

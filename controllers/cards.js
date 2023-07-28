@@ -1,15 +1,16 @@
 const Card = require('../models/card');
+const { ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT } = require('../utils/error_codes');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
       if (!cards){
-        return res.status(404).send( {massage: 'Карточки не найдены'} )
+        return res.status(ERROR_CODE_NOTFOUND).send( {massage: 'Карточки не найдены'} )
       };
       res.send({ data: cards })
     })
     .catch(() => {
-      res.status(500).send({ massage: 'Ошибка по-умолчанию' });
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
     })
 };
 
@@ -19,10 +20,10 @@ module.exports.createCard = (req, res) => {
   Card.create({name, link, owner: userId})
     .then(card => res.send({ data: card }))
     .catch((err) => {
-      if (err.name = 'SomeErrorName'){
-        return res.status(400).send( {massage: 'Переданы некорректные данные в метод создания карточки'} )
+      if (err.name = 'ValidationError'){
+        return res.status(ERROR_CODE_INCORRECT_DATA).send( {massage: 'Переданы некорректные данные при создании карточки'} )
       };
-      res.status(500).send({ massage: 'Ошибка по-умолчанию' });
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
      })
 };
 
@@ -31,13 +32,16 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card){
-        return res.status(404).send( {massage: 'Карточка с указанным _id не найдена'} )
+        return res.status(ERROR_CODE_NOTFOUND).send( {massage: 'Карточка с указанным _id не найдена'} )
       };
       res.send({ message: 'Карточка удалена' })
     })
-    .catch(() => {
-      res.status(500).send({ massage: 'Ошибка по-умолчанию' });
-    })
+    .catch((err) => {
+      if (err.name = 'CastError'){
+        return res.status(ERROR_CODE_INCORRECT_DATA).send( {massage: 'Переданы некорректные данные при удалении карточки'} )
+      };
+      res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
+     })
 };
 
 module.exports.likeCard = (req, res) => {
@@ -45,12 +49,15 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
   .then((card) => {
     if (!card){
-      return res.status(404).send( {massage: 'Карточка с указанным _id не найдена'} )
+      return res.status(ERROR_CODE_NOTFOUND).send( {massage: 'Карточка с указанным _id не найдена'} )
     };
     res.send({ data: card })
   })
   .catch(() => {
-    res.status(500).send({ massage: 'Ошибка по-умолчанию' });
+    if (err.name === 'CastError') {
+      return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: 'Передан несуществующий _id карточкПереданы некорректные данные для постановки/снятии лайка' });
+    };
+    res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
   })
 };
 
@@ -59,11 +66,14 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
   .then((card) => {
     if (!card){
-      return res.status(404).send( {massage: 'Карточка с указанным _id не найдена'} )
+      return res.status(ERROR_CODE_NOTFOUND).send( {massage: 'Карточка с указанным _id не найдена'} )
     };
     res.send({ data: card })
   })
   .catch(() => {
+    if (err.name === 'CastError') {
+      return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: 'Передан несуществующий _id карточкПереданы некорректные данные для постановки/снятии лайка' });
+    };
     res.status(500).send({ massage: 'Произошла ошибка' });
   })
 }
