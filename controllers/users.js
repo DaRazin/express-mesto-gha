@@ -38,7 +38,7 @@ module.exports.createUser = (req, res) => {
     .then(user => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError'){
-        return res.status(ERROR_CODE_INCORRECT_DATA).send( {massage: 'Переданы некорректные данные при создании пользователя'} );
+        return res.status(ERROR_CODE_INCORRECT_DATA).send( {message: 'Переданы некорректные данные при создании пользователя'} );
       };
       res.status(ERROR_CODE_DEFAULT).send({ massage: 'Ошибка по-умолчанию' });
     })
