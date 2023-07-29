@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT } = require('../utils/error_codes');
+const { ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT, SUCCES_CODE } = require('../utils/error_codes');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -32,7 +32,7 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(SUCCES_CODE).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' });

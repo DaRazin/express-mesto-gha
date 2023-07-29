@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT } = require('../utils/error_codes');
+const { ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT, SUCCES_CODE } = require('../utils/error_codes');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
@@ -16,7 +16,7 @@ module.exports.createCard = (req, res) => {
   const userId = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner: userId })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(SUCCES_CODE).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: 'Переданы некорректные данные при создании карточки' });
