@@ -24,7 +24,7 @@ module.exports.getUser = (req, res) => {
       };
       res.send({ data: users })
     })
-    .catch(() => {
+    .catch((err) => {
       if (err.name === "CastError") {
         return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: "Указан неверный id. ",})
       };
