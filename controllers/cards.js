@@ -1,5 +1,7 @@
 const Card = require('../models/card');
-const { ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT, SUCCES_CODE } = require('../utils/error_codes');
+const {
+  ERROR_CODE_INCORRECT_DATA, ERROR_CODE_NOTFOUND, ERROR_CODE_DEFAULT, SUCCES_CODE,
+} = require('../utils/error_codes');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
