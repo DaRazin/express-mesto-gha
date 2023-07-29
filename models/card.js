@@ -4,18 +4,18 @@ const user = require('./user');
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    minlenght: 2,
-    maxlenght: 30,
-    required: true
+    required: [true, "Обязательное поле"],
+    minlength: [2, "Минимальная длина поля - 2"],
+    maxlength: [30, "Максимальная длина поля - 30"],
   },
   link: {
     type: String,
-    required: true
+    required: [true, "Обязательное поле"]
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: user,
-    required: true
+    required: [true, "Обязательное поле"]
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,

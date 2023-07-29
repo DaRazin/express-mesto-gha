@@ -53,7 +53,7 @@ module.exports.likeCard = (req, res) => {
     };
     res.send({ data: card })
   })
-  .catch(() => {
+  .catch((err) => {
     if (err.name === 'CastError') {
       return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: 'Передан несуществующий _id карточкПереданы некорректные данные для постановки/снятии лайка' });
     };
@@ -70,10 +70,10 @@ module.exports.dislikeCard = (req, res) => {
     };
     res.send({ data: card })
   })
-  .catch(() => {
+  .catch((err) => {
     if (err.name === 'CastError') {
       return res.status(ERROR_CODE_INCORRECT_DATA).send({ message: 'Передан несуществующий _id карточкПереданы некорректные данные для постановки/снятии лайка' });
     };
-    res.status(500).send({ massage: 'Произошла ошибка' });
+    res.status(ERROR_CODE_DEFAULT).send({ massage: 'Произошла ошибка' });
   })
 }
