@@ -26,6 +26,7 @@ app.patch('*', (req, res) => {
 app.use(errors());
 app.use((err, req, res, next) => {
   const { message } = err;
+  console.log(message);
   res.status(err.statusCode).send({
     message: err.statusCode === 500 ? 'На сервере произошла ошибка' : message
   })

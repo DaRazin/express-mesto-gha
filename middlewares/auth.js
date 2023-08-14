@@ -1,18 +1,18 @@
 const jwt = require('jsonwebtoken');
+const AuthError = require('../errors/auth-err')
 
-module.export = (req, res) => {
+module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  if (!authorization || !authorization.startWith('Bearer ')){
-    return res.status(401).send({ message: 'Необходима авторизация' })
-  };
-  const token = authorization.replace('Bearer', '');
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    return next(new AuthError('Необходима авторизация'));
+  }
+  const token = authorization.replace('Bearer ', '');
   let payload;
   try {
-    payload = jwt.verify(token, 'super-strong-secret')
-  } catch (err) {
-      return res.status(401).send({ message: 'Необходима авторизация' })
+    payload = jwt.verify(token, 'super-strong-secret');
+  } catch(err) {
+    next(new AuthError('Необходима авторизация'));
   }
   req.user = payload;
-
   next();
-}
+};

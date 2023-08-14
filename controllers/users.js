@@ -9,7 +9,7 @@ module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (!users) {
-        next(new NotFoundError ('Пользователи не найдены'));
+        next(new NotFoundError('Пользователи не найдены'));
       }
       return res.send({ data: users });
     })
@@ -21,7 +21,7 @@ module.exports.getUser = (req, res, next) => {
   User.findById(userId)
     .then((users) => {
       if (!users) {
-        return res.status(404).send({ message: 'Пользователь по указанному _id не найден' });
+        next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send({ data: users });
     })
