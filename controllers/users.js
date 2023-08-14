@@ -107,7 +107,6 @@ module.exports.login = (req, res, next) => {
 
 module.exports.getMyProfile = (req, res, next) => {
   const userId = req.user._id;
-  console.log(userId);
   User.findById(userId)
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {

@@ -71,10 +71,11 @@ module.exports.dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
-      if (!card) {
+      if (card) {
+        res.send({ data: card });
+      } else {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       }
-      return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
