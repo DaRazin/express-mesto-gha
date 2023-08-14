@@ -8,7 +8,7 @@ const { validUserId, validUserUpdate, validUserAvatarUpdate } = require('../midd
 
 router.get('/users', getUsers);
 router.get('/users/:userId', validUserId, getUser);
-router.get('/user/me', getMyProfile);
+router.get('/users/me', getMyProfile);
 router.patch('/users/me', validUserUpdate, updateUserData);
 router.patch('/users/me/avatar', validUserAvatarUpdate, updateUserAvatar);
 
