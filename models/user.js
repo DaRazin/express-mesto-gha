@@ -6,14 +6,14 @@ const AuthError = require('../errors/auth-err')
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    minlength: [2, 'Минимальная длина поля - 2'],
-    maxlength: [30, 'Максимальная длина поля - 30'],
-    default: 'Жак-Ив Кусто',
+    minlength: 2,
+    maxlength: 30,
+    default: 'Жак-Ив Кусто'
   },
   about: {
     type: String,
-    minlength: [2, 'Минимальная длина поля - 2'],
-    maxlength: [30, 'Максимальная длина поля - 30'],
+    minlength: 2,
+    maxlength: 30,
     default: 'Исследователь',
   },
   avatar: {
@@ -22,16 +22,12 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Обязательное поле'],
-    unique: [true, 'Обязательное поле'],
-    validate: {
-      validator: (v) => validator.isURL(v),
-      message: 'Ошибка: некорректный email',
-    }
+    required: true,
+    unique: true,
   },
   password: {
     type: String,
-    required: [true, 'Обязательное поле'],
+    required: true,
     select: false,
   },
 });

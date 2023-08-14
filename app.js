@@ -16,10 +16,10 @@ mongoose.connect(DB_URL);
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(auth, routesUsers);
-app.use(auth, routesCards);
 app.post('/signin', validlogin, login);
 app.post('/signup', validCreateUser, createUser);
+app.use(auth, routesUsers);
+app.use(auth, routesCards);
 app.patch('*', (req, res) => {
   res.status(ERROR_CODE_NOTFOUND).send({ message: 'Страница не найдена' });
 });
