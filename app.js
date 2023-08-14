@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/signin', validlogin, login);
 app.post('/signup', validCreateUser, createUser);
-app.use(routesUsers);
-app.use(routesCards);
+app.use(auth, routesUsers);
+app.use(auth, routesCards);
 app.patch('*', (req, res) => {
   res.status(ERROR_CODE_NOTFOUND).send({ message: 'Страница не найдена' });
 });
