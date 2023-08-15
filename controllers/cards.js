@@ -39,7 +39,7 @@ module.exports.deleteCard = (req, res, next) => {
         return next(new ForbiddenError('Недостаточно прав для удаления карточки'));
       }
       return Card.findByIdAndDelete(cardId)
-        .then(() => res.send({ message: 'Карточка удалена' }))
+        .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
