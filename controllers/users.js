@@ -9,7 +9,7 @@ module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (!users) {
-        next(new NotFoundError('Пользователи не найдены'));
+        return next(new NotFoundError('Пользователи не найдены'));
       }
       return res.send({ data: users });
     })
@@ -21,13 +21,13 @@ module.exports.getUser = (req, res, next) => {
   User.findById(userId)
     .then((users) => {
       if (!users) {
-        next(new NotFoundError('Пользователь по указанному _id не найден'));
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return res.send({ data: users });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new IncorrectDataError('Указан неверный id'));
+        return next(new IncorrectDataError('Указан неверный id'));
       } else {
         next(err);
       }
@@ -38,7 +38,6 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  console.log('test');
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
@@ -51,10 +50,10 @@ module.exports.createUser = (req, res, next) => {
       }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          next(new IncorrectDataError('Переданы некорректные данные при создании пользователя'));
+          return next(new IncorrectDataError('Переданы некорректные данные при создании пользователя'));
         }
         if (err.code === 11000) {
-          next(new ConflictEmailError('Переданы некорректные данные при создании пользователя'));
+          return next(new ConflictEmailError('Переданы некорректные данные при создании пользователя'));
         } else {
           next(err);
         }
@@ -67,13 +66,13 @@ module.exports.updateUserData = (req, res, next) => {
   User.findByIdAndUpdate(userId, { name, about }, { runValidators: true, new: true })
     .then((users) => {
       if (!users) {
-        next(new IncorrectDataError('Пользователь по указанному _id не найден'));
+        return next(new IncorrectDataError('Пользователь по указанному _id не найден'));
       }
       return res.send({ data: users });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new IncorrectDataError('Переданы некорректные данные при обновлении информации пользователя'));
+        return next(new IncorrectDataError('Переданы некорректные данные при обновлении информации пользователя'));
       } else {
         next(err);
       }
@@ -86,13 +85,13 @@ module.exports.updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(userId, { avatar }, { new: true })
     .then((users) => {
       if (!users) {
-        next(new IncorrectDataError('Пользователь по указанному _id не найден'));
+        return next(new IncorrectDataError('Пользователь по указанному _id не найден'));
       }
       return res.send({ data: users });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new IncorrectDataError('Переданы некорректные данные при создании пользователя'));
+        return next(new IncorrectDataError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(err);
       }
@@ -115,7 +114,7 @@ module.exports.getMyProfile = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new IncorrectDataError('Указан неверный id'));
+        return next(new IncorrectDataError('Указан неверный id'));
       } else {
         next(err);
       }
