@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const IncorrectDataError = require('../errors/incorrect-data-err');
 const NotFoundError = require('../errors/not-found-err');
-const ForbiddenError = require('../errors/forbidden-err')
+const ForbiddenError = require('../errors/forbidden-err');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -36,7 +36,7 @@ module.exports.deleteCard = (req, res, next) => {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       }
       if (!(card.owner.toJSON() === req.user._id)) {
-        next(new ForbiddenError('Недостаточно прав для удаления карточки'))
+        next(new ForbiddenError('Недостаточно прав для удаления карточки'));
       }
       return res.send({ message: 'Карточка удалена' });
     })

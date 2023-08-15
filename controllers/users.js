@@ -1,9 +1,9 @@
-const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const User = require('../models/user');
 const IncorrectDataError = require('../errors/incorrect-data-err');
 const NotFoundError = require('../errors/not-found-err');
-const ConflictEmailError = require('../errors/conflict-email-err')
+const ConflictEmailError = require('../errors/conflict-email-err');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -35,26 +35,30 @@ module.exports.getUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
   console.log('test');
   bcrypt.hash(password, 10)
-  .then ((hash) => User.create({ name, about, avatar, email, password: hash })
-    .then((user) => res.status(201).send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email
-     }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new IncorrectDataError('Переданы некорректные данные при создании пользователя'));
-      }
-      if (err.code === 11000) {
-        next(new ConflictEmailError('Переданы некорректные данные при создании пользователя'));
-      } else {
-        next(err);
-      }
-    }));
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    })
+      .then((user) => res.status(201).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          next(new IncorrectDataError('Переданы некорректные данные при создании пользователя'));
+        }
+        if (err.code === 11000) {
+          next(new ConflictEmailError('Переданы некорректные данные при создании пользователя'));
+        } else {
+          next(err);
+        }
+      }));
 };
 
 module.exports.updateUserData = (req, res, next) => {
@@ -102,7 +106,7 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch(next)
+    .catch(next);
 };
 
 module.exports.getMyProfile = (req, res, next) => {
@@ -116,5 +120,4 @@ module.exports.getMyProfile = (req, res, next) => {
         next(err);
       }
     });
-}
-
+};

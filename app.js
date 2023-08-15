@@ -4,11 +4,12 @@ const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const routesUsers = require('./routes/users');
 const routesCards = require('./routes/cards');
-const auth = require('./middlewares/auth')
+const auth = require('./middlewares/auth');
 const {
-  createUser, login
+  createUser, login,
 } = require('./controllers/users');
-const { validCreateUser, validlogin  } = require('./middlewares/validator');
+const { validCreateUser, validlogin } = require('./middlewares/validator');
+
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const { ERROR_CODE_NOTFOUND } = require('./utils/error_codes');
 
@@ -28,8 +29,8 @@ app.use((err, req, res, next) => {
   const { message } = err;
   console.log(message);
   res.status(err.statusCode).send({
-    message: err.statusCode === 500 ? 'На сервере произошла ошибка' : message
-  })
+    message: err.statusCode === 500 ? 'На сервере произошла ошибка' : message,
+  });
   next();
 });
 app.listen(PORT, () => {
